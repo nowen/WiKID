@@ -1,0 +1,16 @@
+Greetings!
+
+We're trying to promote the use of two-factor authentication in Web applications.  The code we're releasing (to start, at least) is all LGPL.  We're starting with the Network Client API code.  This code always your application to work with the WiKID Strong Authentication server, to register users, to validate one-time passcodes, etc.  
+
+For more information about the WiKID Strong Authentication System, please see our website at http://www.wikidsystems.com.  Due to certain licensing restrictions, we have both a commercial and an open source version.  Unlike most token systems, we use public key encryption which allows each user to have more than one token and each token to work with more than one server/WiKID domain.  
+
+  Links of interest:
+http://www.wikidsystems.com/learn-more/technology
+
+http://www.wikidsystems.com/community-version/support/wikid-support-center/faq/whats-the-difference-between-the-community-release-and-enterprise-release/
+
+The system can also validate SSL certificates for the user, thwarting network-based MiTM attacks:
+
+http://www.wikidsystems.com/learn-more/technology/mutual_authentication
+
+Enjoy!
