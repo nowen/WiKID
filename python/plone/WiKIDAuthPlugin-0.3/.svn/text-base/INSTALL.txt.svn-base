@@ -1,0 +1,81 @@
+=====================================================================
+Installation
+=====================================================================
+
+Requires pyOpenSSl:
+To install pyopenssl for the unifiedinstaller version, download the pyopenssl source, 
+cd to the source directory and run setup.py using the bundled python:
+
+/opt/Plone-3.0.6/Python-2.4.4/bin/python setup.py install 
+
+=====================================================================
+How to install
+=====================================================================
+Untar the file into your products directory and edit the WiKIDAuthPlugin.py file 
+to reflect your WiKID setup:
+
+    domaincode = '127000000001'
+    host = '127.0.0.1'
+    port = 8388
+    caCert = '/opt/Plone-3.0.6/zinstance/Products/WiKIDAuthPlugin/WiKID-ca.pem'
+    pkey = '/opt/Plone-3.0.6/zinstance/Products/WiKIDAuthPlugin/plone.p12'
+    passPhrase = 'passphrase'
+
+Restart Zope
+
+In the ZMI, click on acl_users, select WiKIDAuthPlugin from the drop-down list
+and click Add.
+
+Click on WiKIDAuthPlugin and Check the box for Authentication to activate 
+the Plugin.
+
+=====================================================================
+Debugging
+=====================================================================
+
+PAS can be difficult to debug as "PAS eats exceptions".  
+
+You can check the logs on WiKIDAdmin to see of the request is getting 
+to the server.
+
+First, you will see the one-time passcode request:
+"Issued passcode to device 5665045168396496484"
+
+Then you should see the successful validation from Plone:
+
+"Verified credentials - UserID: nowen Domain: 010100000010"
+
+=====================================================================
+Installing the WiKID Server  
+=====================================================================
+
+Complete installation instructions for both the Enterprise and Community 
+Versions are available here:
+
+   http://www.wikidsystems.com/documentation/installation-documentation
+
+=====================================================================
+Mutual HTTPS Authentication
+=====================================================================
+The WiKID PC tokens support mutual https authentication, thwarting network-based
+Man-in-the-middle attacks.  Simply Add the https URL of your Plone site to
+the domain as the "Registered URL". 
+
+WiKID uses a hash of the server certificate stored on the authentication server 
+to perform site authentication. When the user requests an OTP, the hash is also 
+sent to the token client. Before presenting the user with the OTP, the token 
+client fetches the certificate from the website, hashes it and compares it to 
+the retrieved hash. If the hashes match, the URL is presented as validated and 
+the default browser is launched to that URL. This method leverages the security 
+and investment in SSL certificates and provides a consistent session and mutual 
+authentication method to the user.
+
+   http://www.wikidsystems.com/learn-more/technology/mutual_authentication
+
+
+
+
+
+
+
+

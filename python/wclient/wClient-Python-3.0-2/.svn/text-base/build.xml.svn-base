@@ -1,0 +1,215 @@
+<!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+<!-- Ant build configuration for WiKID Network Client for Python               -->
+<!-- Written by: Greg Haygood <ghaygood@wikidsystems.com>                   -->
+<!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+                                 
+<project name="wClient-Python" default="package" basedir=".">
+
+	<description>
+			Build file for the standalone version of the WiKID Python Network Client 
+	</description>
+
+  <property environment="env" />
+	<property prefix="build" file="build.properties.local" />
+	<property prefix="build" file="build.properties" />
+
+  <!-- set global properties for this build, in case we ever need to override -->
+	<property name="vendor.name" 	value="WiKID Systems, Inc." />
+	<property name="vendor.email"   value="support@wikidsystems.com" />
+	<property name="vendor.url" 	value="http://www.wikidsystems.com" />
+
+	<property name="build.version.tag" value="" />
+
+  <property name="lib.dir"    	location="${basedir}/lib"/>
+  <property name="dist.dir"	location="${basedir}/dist"/>
+  <property name="stage.dir"	location="${dist.dir}/stage"/>
+
+	<path id="build.classpath">
+		<fileset dir="${lib.dir}">
+			<include name="**/*.jar"/>
+		</fileset>
+	</path>
+
+	<!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+  <target name="usage">
+
+   <echo>
+-------------------------------------------------------------------------------
+ANT Build file project: ${ant.project.name}
+(c) 2001-2007, ${vendor.name} ${vendor.url}
+-------------------------------------------------------------------------------
+
+Usage: ant [ &lt; package &gt; ]
+
+-------------------------------------------------------------------------------
+   </echo>
+
+	</target>
+
+	<!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+  <target name="update">
+		<exec executable="svn" dir="${basedir}">
+			<arg line="update" />
+			<arg line="--non-interactive" />
+		</exec>
+	</target>
+
+	<!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+  <target name="update.build.properties">
+		<exec executable="svn" dir="${basedir}">
+			<arg line="update" />
+			<arg line="build.properties" />
+			<arg line="--non-interactive" />
+		</exec>
+	</target>
+
+	<!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+  <target name="commit.build.properties" depends="init">
+		<exec executable="svn" dir="${basedir}">
+			<arg line="commit" />
+			<arg line="build.properties" />
+			<arg line="-m 'build number increment by ${env.USER} on ${build.date}: version: ${build.version}'" />
+			<arg line="--non-interactive" />
+		</exec>
+	</target>
+
+	<!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+  <target name="tag" depends="init">
+
+<!--
+		<exec executable="svn" dir="${basedir}">
+			<arg line="mkdir http://dev.wikidsystems.com/svn/tags/php/pear" />
+			<arg line="-m 'create top-level path'" />
+		</exec>
+-->
+		<exec executable="svn" dir="${basedir}">
+			<arg line="copy" /> 
+			<arg line="http://dev.wikidsystems.com/svn/trunk/python/wclient" />
+			<arg line="http://dev.wikidsystems.com/svn/tags/python/wclient/${build.version}" />
+			<arg line="-m 'auto-tag for build: ${build.version}'" />
+		</exec>
+
+		<antcall target="version.increment" />
+
+	</target>
+
+	<!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+  <target name="init">
+
+		<property name="release.name" value="${build.name}" />
+
+		<property name="build.version.primary" 	
+							value="${build.version.major}.${build.version.minor}" />
+		<property name="build.version.number" 
+							value="${build.version.major}.${build.version.minor}-${build.version.tag}${build.version.iterator}" />
+
+    <!-- Create the time stamp -->
+		<tstamp>
+			<format property="shortdate" pattern="yyyy-MM-dd" />
+			<format property="thisyear" pattern="yyyy" />
+			<format property="datetimestampISO8601" pattern="yyyy-MM-dd'T'HH:mm:ssZ" />
+			<format property="datetimestamp" pattern="yyyy-MM-dd HH:mm:ss Z" />
+			<format property="tstamp.buildid" pattern="yyyyMMdd'-'HHmm" />
+		</tstamp>
+		<property name="build.date" value="${datetimestamp}"/>
+		<echo>Build Date: ${build.date}</echo>
+
+		<property name="app.copyright" 
+							value="2001-${thisyear} ${vendor.name}" />
+		<property name="app.license" 
+							value="LGPL" />
+		<property name="build.version" value="${build.name}-${build.version.number}" />
+
+  </target>
+
+	<!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+  <target name="prepare" depends="init">
+
+		<!-- evaluated at runtime, so have to define here -->
+		<filterset id="replace-tokens">
+			<filter token="PROJECT_NAME" value="${ant.project.name}" />
+			<filter token="COPYRIGHT" value="${app.copyright}" />
+			<filter token="COPYRIGHT-YEARS" value="2001-${thisyear}" />
+			<filter token="THIS_YEAR" value="${thisyear}" />
+			<filter token="VERSION_DATE" value="${shortdate}" />
+			<filter token="LICENSE" value="${app.license}" />
+			<filter token="VERSION" value="${build.version.number}" />
+			<filter token="VENDOR" value="${vendor.name}" />
+			<filter token="VENDOR_EMAIL" value="${vendor.email}" />
+			<filter token="VENDOR_URL" value="${vendor.url}" />
+		</filterset>
+
+		<echo>Copyright: ${app.copyright}</echo>
+		<echo>License: ${app.license}</echo>
+		<echo>Version: ${build.version}</echo>
+
+	</target>
+
+	<!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+	<target name="version.increment" description="increment the version number">
+
+		<propertyfile file="build.properties" comment="Build version info">
+			<entry key="version.iterator" default="0" type="int" operation="+" value="1"/>
+		</propertyfile>
+
+		<antcall target="commit.build.properties" />
+
+	</target>
+
+	<!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+  <target name="package" depends="prepare" description="generate the distribution">
+
+    <mkdir dir="${dist.dir}/ARCHIVE"/>
+		<move todir="${dist.dir}/ARCHIVE">
+		  <fileset dir="${dist.dir}">
+				<include name="${build.name}*" />
+		  </fileset>
+		</move>
+
+    <mkdir dir="${stage.dir}"/>
+
+	  <copy todir="${stage.dir}">
+		  <fileset dir="${basedir}">
+				<exclude name="*local.py" />
+				<include name="*.py" />
+				<include name="readme.txt" />
+				<include name="license.txt" />
+				<include name="WiKID-ca.pem" />
+		  </fileset>
+			<filterset refid="replace-tokens" />
+	  </copy>
+
+		<tar destfile="${dist.dir}/${build.name}-${build.version.number}.tar.gz"
+				 basedir="${stage.dir}" compression="gzip" />
+
+		<move todir="${dist.dir}">
+		  <fileset dir="${stage.dir}">
+				<include name="${build.name}*.tgz" />
+		  </fileset>
+		</move>
+
+	</target>
+
+	<!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+  <target name="clean" description="clean up" >
+    <!-- Delete the ${build.dir} directory tree -->
+    <delete dir="${src.dir}"/>
+    <delete dir="${build.dir}"/>
+    <delete dir="${stage.dir}"/>
+  </target>
+
+	<!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+  <target name="upload.sf" depends="init"
+					description="upload current release to sourceforge.net" >
+
+		<ftp server="upload.sourceforge.net" userid="anonymous" 
+				 password="support@wikidsystems.com" passive="true" verbose="true"
+				 remotedir="incoming" action="send">
+			<fileset dir="${dist.dir}">
+				<include name="${build.version}.tgz" />
+			</fileset>
+		</ftp>
+  </target>
+
+</project>
+

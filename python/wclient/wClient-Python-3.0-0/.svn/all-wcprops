@@ -1,0 +1,47 @@
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/!svn/ver/1233/tags/python/wclient/wClient-Python-3.0-0
+END
+readme.txt
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/!svn/ver/1233/tags/python/wclient/wClient-Python-3.0-0/readme.txt
+END
+WiKID-ca.pem
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/!svn/ver/1233/tags/python/wclient/wClient-Python-3.0-0/WiKID-ca.pem
+END
+license.txt
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/!svn/ver/1233/tags/python/wclient/wClient-Python-3.0-0/license.txt
+END
+build.properties
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/!svn/ver/1233/tags/python/wclient/wClient-Python-3.0-0/build.properties
+END
+pyexample.py
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/!svn/ver/1233/tags/python/wclient/wClient-Python-3.0-0/pyexample.py
+END
+build.xml
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/!svn/ver/1233/tags/python/wclient/wClient-Python-3.0-0/build.xml
+END
+pywClient.py
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/!svn/ver/1233/tags/python/wclient/wClient-Python-3.0-0/pywClient.py
+END

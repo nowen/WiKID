@@ -1,0 +1,7 @@
+#Build version info
+#Thu Mar 06 22:34:56 EST 2008
+name=wClient-Python
+version.minor=0
+version.iterator=0
+version.tag=
+version.major=3
